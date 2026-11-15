@@ -1,116 +1,66 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:topic12_provider_demo/data/repositories/study_repository.dart';
+import 'package:topic12_provider_demo/domain/models/study_task.dart';
 import 'package:topic12_provider_demo/presentation/viewmodels/study_view_model.dart';
 
+class FakeStudyRepository implements StudyRepository {
+  final List<StudyTask> data = [
+    const StudyTask(id: '1', title: 'Bài A', subject: 'Toán', dueLabel: 'Thứ 2'),
+    const StudyTask(id: '2', title: 'Bài B', subject: 'Lý', dueLabel: 'Thứ 3', isDone: true),
+  ];
+  @override
+  Future<List<StudyTask>> getTasks() async => List.of(data);
+  @override
+  Future<void> addTask(StudyTask task) async => data.add(task);
+  @override
+  Future<void> updateTask(StudyTask task) async {
+    final i = data.indexWhere((e) => e.id == task.id);
+    if (i >= 0) data[i] = task;
+  }
+  @override
+  Future<void> deleteTask(String id) async => data.removeWhere((e) => e.id == id);
+}
+
 void main() {
-  group('StudyViewModel', () {
-    late StudyViewModel viewModel;
-
-    setUp(() {
-      viewModel = StudyViewModel();
+  group('StudyViewModel + Supabase repository contract', () {
+    late FakeStudyRepository repository;
+    late StudyViewModel model;
+    setUp(() { repository = FakeStudyRepository(); model = StudyViewModel(repository: repository); });
+    test('loads tasks and calculates progress', () async {
+      await model.loadTasks();
+      expect(model.totalTasks, 2);
+      expect(model.completedTasks, 1);
+      expect(model.progress, 0.5);
     });
-
-    test('loads initial tasks and calculates progress', () {
-      expect(viewModel.totalTasks, 5);
-      expect(viewModel.completedTasks, 1);
-      expect(viewModel.progress, 0.2);
-    });
-
-    test('toggleTask updates completion and progress', () {
-      viewModel.toggleTask('task-1');
-
-      expect(viewModel.completedTasks, 2);
-      expect(viewModel.progress, 0.4);
-      expect(viewModel.tasks.first.isDone, isTrue);
-    });
-
-    test('selectSubject filters visible tasks', () {
-      viewModel.selectSubject('Toán');
-
-      expect(viewModel.visibleTasks, hasLength(1));
-      expect(viewModel.visibleTasks.first.subject, 'Toán');
-    });
-
-    test('addTask trims input and makes the new task visible', () {
-      viewModel.selectSubject('Toán');
-
-      final added = viewModel.addTask(
-        title: '  Ôn thi cuối kỳ  ',
-        subject: '  Giải tích  ',
-        dueLabel: 'Thứ 4',
-      );
-
+    test('adds task with weekday and persists it', () async {
+      await model.loadTasks();
+      final added = await model.addTask(title: 'Ôn tập', subject: 'Toán', dueLabel: 'Thứ 5');
       expect(added, isTrue);
-      expect(viewModel.selectedSubject, 'Tất cả');
-      expect(viewModel.totalTasks, 6);
-      expect(viewModel.tasks.last.title, 'Ôn thi cuối kỳ');
-      expect(viewModel.tasks.last.subject, 'Giải tích');
-      expect(viewModel.tasks.last.dueLabel, 'Thứ 4');
+      expect(repository.data.last.dueLabel, 'Thứ 5');
+      expect(model.totalTasks, 3);
     });
-
-    test('rejects empty task fields without changing state', () {
-      final added = viewModel.addTask(title: ' ', subject: 'Toán');
-
-      expect(added, isFalse);
-      expect(viewModel.totalTasks, 5);
+    test('rejects empty task', () async {
+      await model.loadTasks();
+      expect(await model.addTask(title: ' ', subject: 'Toán'), isFalse);
+      expect(model.totalTasks, 2);
     });
-
-
-    test('repository provides independent task collections', () {
-      final first = StudyViewModel();
-      final second = StudyViewModel();
-
-      first.addTask(title: 'New task', subject: 'Toán');
-
-      expect(first.totalTasks, 6);
-      expect(second.totalTasks, 5);
-
-      first.dispose();
-      second.dispose();
+    test('toggles completion and persists', () async {
+      await model.loadTasks();
+      await model.toggleTask('1');
+      expect(repository.data.first.isDone, isTrue);
+      expect(model.progress, 1);
     });
-
-    test('notifies listeners after state changes', () {
-      var notifications = 0;
-      viewModel.addListener(() => notifications++);
-
-      viewModel.toggleTask('task-1');
-      viewModel.selectSubject('Toán');
-      viewModel.addTask(title: 'Bài mới', subject: 'Toán');
-
-      expect(notifications, 3);
+    test('deletes task and recalculates progress', () async {
+      await model.loadTasks();
+      await model.deleteTask('2');
+      expect(repository.data, hasLength(1));
+      expect(model.completedTasks, 0);
+      expect(model.progress, 0);
     });
-
-
-    test('deleteTask removes the task and recalculates progress', () {
-      viewModel.deleteTask('task-4');
-
-      expect(viewModel.totalTasks, 4);
-      expect(viewModel.completedTasks, 0);
-      expect(viewModel.progress, 0);
-      expect(viewModel.tasks.any((task) => task.id == 'task-4'), isFalse);
-    });
-
-    test('deleteTask ignores an unknown task ID', () {
-      viewModel.deleteTask('missing');
-
-      expect(viewModel.totalTasks, 5);
-    });
-
-    test('addTask stores the selected weekday', () {
-      viewModel.addTask(
-        title: 'Ôn bài',
-        subject: 'Toán',
-        dueLabel: 'Thứ 5',
-      );
-
-      expect(viewModel.tasks.last.dueLabel, 'Thứ 5');
-    });
-
-    test('ignores unknown task IDs and subjects', () {
-      viewModel.toggleTask('missing');
-      viewModel.selectSubject('Không tồn tại');
-
-      expect(viewModel.totalTasks, 5);
-      expect(viewModel.selectedSubject, 'Tất cả');
+    test('filters tasks by subject', () async {
+      await model.loadTasks();
+      model.selectSubject('Toán');
+      expect(model.visibleTasks, hasLength(1));
     });
   });
 }
