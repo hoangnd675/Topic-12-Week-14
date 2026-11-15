@@ -42,6 +42,13 @@ class StudyPage extends StatelessWidget {
                 completed: study.completedTasks,
                 total: study.totalTasks,
               ),
+              if (study.error != null) ...[
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: Text(study.error!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+                ),
+              ],
+              if (study.isLoading) const LinearProgressIndicator(),
               const SizedBox(height: 24),
               Row(
                 children: [
@@ -74,7 +81,9 @@ class StudyPage extends StatelessWidget {
                 }).toList(),
               ),
               const SizedBox(height: 12),
-              if (study.visibleTasks.isEmpty)
+              if (study.isLoading && study.visibleTasks.isEmpty)
+                const Center(child: Padding(padding: EdgeInsets.all(24), child: CircularProgressIndicator()))
+              else if (study.visibleTasks.isEmpty)
                 const _EmptyState()
               else
                 ...study.visibleTasks.map(
@@ -166,7 +175,7 @@ class StudyPage extends StatelessWidget {
                     onPressed: () {
                       if (!formKey.currentState!.validate()) return;
 
-                      final added = context.read<StudyViewModel>().addTask(
+                      final added = await context.read<StudyViewModel>().addTask(
                             title: titleController.text,
                             subject: subjectController.text,
                             dueLabel: selectedDay,
