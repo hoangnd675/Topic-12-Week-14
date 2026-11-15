@@ -1,5 +1,5 @@
 name: topic12_provider_dashboard
-description: Flutter Web demo for Provider and ChangeNotifier with MVVM and Clean Code.
+description: Flutter Web demo for Provider and ChangeNotifier.
 publish_to: 'none'
 version: 1.0.0+1
 
