@@ -36,6 +36,7 @@ void main() {
       final added = viewModel.addTask(
         title: '  Ôn thi cuối kỳ  ',
         subject: '  Giải tích  ',
+        dueLabel: 'Thứ 4',
       );
 
       expect(added, isTrue);
@@ -43,6 +44,7 @@ void main() {
       expect(viewModel.totalTasks, 6);
       expect(viewModel.tasks.last.title, 'Ôn thi cuối kỳ');
       expect(viewModel.tasks.last.subject, 'Giải tích');
+      expect(viewModel.tasks.last.dueLabel, 'Thứ 4');
     });
 
     test('rejects empty task fields without changing state', () {
@@ -75,6 +77,32 @@ void main() {
       viewModel.addTask(title: 'Bài mới', subject: 'Toán');
 
       expect(notifications, 3);
+    });
+
+
+    test('deleteTask removes the task and recalculates progress', () {
+      viewModel.deleteTask('task-4');
+
+      expect(viewModel.totalTasks, 4);
+      expect(viewModel.completedTasks, 0);
+      expect(viewModel.progress, 0);
+      expect(viewModel.tasks.any((task) => task.id == 'task-4'), isFalse);
+    });
+
+    test('deleteTask ignores an unknown task ID', () {
+      viewModel.deleteTask('missing');
+
+      expect(viewModel.totalTasks, 5);
+    });
+
+    test('addTask stores the selected weekday', () {
+      viewModel.addTask(
+        title: 'Ôn bài',
+        subject: 'Toán',
+        dueLabel: 'Thứ 5',
+      );
+
+      expect(viewModel.tasks.last.dueLabel, 'Thứ 5');
     });
 
     test('ignores unknown task IDs and subjects', () {
