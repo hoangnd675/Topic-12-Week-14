@@ -1,32 +1,36 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:topic12_provider_demo/domain/models/product.dart';
-import 'package:topic12_provider_demo/presentation/viewmodels/cart_view_model.dart';
+import 'package:topic12_provider_demo/presentation/viewmodels/study_view_model.dart';
 
 void main() {
-  group('CartViewModel', () {
-    late CartViewModel model;
-    late Product product;
+  group('StudyViewModel', () {
+    late StudyViewModel model;
+
     setUp(() {
-      model = CartViewModel();
-      product = model.products.first;
+      model = StudyViewModel();
     });
-    test('adds product and updates count and total', () {
-      model.add(product);
-      expect(model.itemCount, 1);
-      expect(model.total, product.price);
+
+    test('starts with sample study tasks', () {
+      expect(model.tasks, isNotEmpty);
+      expect(model.totalTasks, greaterThan(0));
     });
-    test('removes product and clears cart', () {
-      model.add(product);
-      model.add(product);
-      model.remove(product);
-      expect(model.quantityFor(product), 1);
-      model.clearCart();
-      expect(model.itemCount, 0);
-      expect(model.total, 0);
+
+    test('toggling a task updates completed count', () {
+      final task = model.tasks.first;
+      final before = model.completedTasks;
+      model.toggleTask(task.id);
+      expect(model.completedTasks, before + (task.isDone ? -1 : 1));
     });
-    test('filters products by category', () {
-      model.selectCategory('Gia dụng');
-      expect(model.visibleProducts.every((p) => p.category == 'Gia dụng'), isTrue);
+
+    test('adds a new task', () {
+      final before = model.totalTasks;
+      model.addTask(title: 'Ôn tập Provider', subject: 'Lập trình');
+      expect(model.totalTasks, before + 1);
+      expect(model.tasks.last.title, 'Ôn tập Provider');
+    });
+
+    test('filters tasks by subject', () {
+      model.selectSubject('Toán');
+      expect(model.visibleTasks.every((task) => task.subject == 'Toán'), isTrue);
     });
   });
 }
