@@ -20,21 +20,15 @@ class StudyPage extends StatelessWidget {
           style: TextStyle(fontWeight: FontWeight.w800),
         ),
         actions: [
-          IconButton(
-            tooltip: 'Đổi giao diện',
+          TextButton(
             onPressed: context.read<ThemeViewModel>().toggleTheme,
-            icon: Icon(
-              theme.isDark
-                  ? Icons.light_mode_outlined
-                  : Icons.dark_mode_outlined,
-            ),
+            child: Text(theme.isDark ? 'Giao diện sáng' : 'Giao diện tối'),
           ),
           const SizedBox(width: 8),
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showAddTaskDialog(context),
-        icon: const Icon(Icons.add),
         label: const Text('Thêm nhiệm vụ'),
       ),
       body: Center(
@@ -43,18 +37,7 @@ class StudyPage extends StatelessWidget {
           child: ListView(
             padding: const EdgeInsets.fromLTRB(20, 12, 20, 100),
             children: [
-              const Text(
-                'Xin chào, bạn học tốt nhé! 👋',
-                style: TextStyle(fontSize: 26, fontWeight: FontWeight.w800),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                'Lập kế hoạch nhỏ, hoàn thành mục tiêu lớn.',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
-              ),
-              const SizedBox(height: 22),
+              const SizedBox(height: 8),
               _ProgressCard(
                 completed: study.completedTasks,
                 total: study.totalTasks,
@@ -83,6 +66,7 @@ class StudyPage extends StatelessWidget {
                   return ChoiceChip(
                     label: Text(subject),
                     selected: study.selectedSubject == subject,
+                    showCheckmark: false,
                     onSelected: (_) => context
                         .read<StudyViewModel>()
                         .selectSubject(subject),
@@ -233,8 +217,6 @@ class _TaskTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-
     return Card(
       elevation: 0,
       margin: const EdgeInsets.only(bottom: 8),
@@ -252,10 +234,6 @@ class _TaskTile extends StatelessWidget {
           ),
         ),
         subtitle: Text('${task.subject}  •  ${task.dueLabel}'),
-        secondary: Icon(
-          task.isDone ? Icons.check_circle : Icons.menu_book_outlined,
-          color: task.isDone ? Colors.green : colors.primary,
-        ),
       ),
     );
   }
@@ -270,8 +248,6 @@ class _EmptyState extends StatelessWidget {
       padding: EdgeInsets.all(28),
       child: Column(
         children: [
-          Icon(Icons.event_available_outlined, size: 42),
-          SizedBox(height: 8),
           Text('Chưa có nhiệm vụ trong môn học này.'),
         ],
       ),
