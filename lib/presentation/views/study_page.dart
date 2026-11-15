@@ -99,72 +99,85 @@ class StudyPage extends StatelessWidget {
         context: context,
         builder: (dialogContext) {
           return StatefulBuilder(
-            builder: (dialogContext, setDialogState) => AlertDialog(
-            title: const Text('Thêm nhiệm vụ học tập'),
-            content: Form(
-              key: formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextFormField(
-                    controller: titleController,
-                    decoration:
-                        const InputDecoration(labelText: 'Tên nhiệm vụ'),
-                    validator: (value) =>
-                        value == null || value.trim().isEmpty
-                            ? 'Vui lòng nhập tên nhiệm vụ'
-                            : null,
+            builder: (dialogContext, setDialogState) {
+              return AlertDialog(
+                title: const Text('Thêm nhiệm vụ học tập'),
+                content: Form(
+                  key: formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextFormField(
+                        controller: titleController,
+                        decoration: const InputDecoration(
+                          labelText: 'Tên nhiệm vụ',
+                        ),
+                        validator: (value) =>
+                            value == null || value.trim().isEmpty
+                                ? 'Vui lòng nhập tên nhiệm vụ'
+                                : null,
+                      ),
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        controller: subjectController,
+                        decoration: const InputDecoration(
+                          labelText: 'Môn học',
+                        ),
+                        validator: (value) =>
+                            value == null || value.trim().isEmpty
+                                ? 'Vui lòng nhập môn học'
+                                : null,
+                      ),
+                      const SizedBox(height: 12),
+                      DropdownButtonFormField<String>(
+                        value: selectedDay,
+                        decoration: const InputDecoration(labelText: 'Thứ'),
+                        items: const [
+                          'Thứ 2',
+                          'Thứ 3',
+                          'Thứ 4',
+                          'Thứ 5',
+                          'Thứ 6',
+                          'Thứ 7',
+                          'Chủ nhật',
+                        ]
+                            .map(
+                              (day) => DropdownMenuItem(
+                                value: day,
+                                child: Text(day),
+                              ),
+                            )
+                            .toList(),
+                        onChanged: (day) {
+                          if (day != null) {
+                            setDialogState(() => selectedDay = day);
+                          }
+                        },
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 12),
-                  TextFormField(
-                    controller: subjectController,
-                    decoration: const InputDecoration(labelText: 'Môn học'),
-                    validator: (value) =>
-                        value == null || value.trim().isEmpty
-                            ? 'Vui lòng nhập môn học'
-                            : null,
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(dialogContext),
+                    child: const Text('Hủy'),
                   ),
-                  const SizedBox(height: 12),
-                  DropdownButtonFormField<String>(
-                    value: selectedDay,
-                    decoration: const InputDecoration(labelText: 'Thứ'),
-                    items: const [
-                      'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5',
-                      'Thứ 6', 'Thứ 7', 'Chủ nhật',
-                    ].map((day) => DropdownMenuItem(
-                      value: day,
-                      child: Text(day),
-                    )).toList(),
-                    onChanged: (day) {
-                      if (day != null) {
-                        setDialogState(() => selectedDay = day);
-                      }
+                  FilledButton(
+                    onPressed: () {
+                      if (!formKey.currentState!.validate()) return;
+
+                      final added = context.read<StudyViewModel>().addTask(
+                            title: titleController.text,
+                            subject: subjectController.text,
+                            dueLabel: selectedDay,
+                          );
+                      if (added) Navigator.pop(dialogContext);
                     },
+                    child: const Text('Thêm'),
                   ),
                 ],
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(dialogContext),
-                child: const Text('Hủy'),
-              ),
-              FilledButton(
-                onPressed: () {
-                  if (!formKey.currentState!.validate()) return;
-
-                  final added = context.read<StudyViewModel>().addTask(
-                        title: titleController.text,
-                        subject: subjectController.text,
-                        dueLabel: selectedDay,
-                      );
-                  if (added) Navigator.pop(dialogContext);
-                },
-                child: const Text('Thêm'),
-              ),
-            ],
-          );
-            ),
+              );
+            },
           );
         },
       );
