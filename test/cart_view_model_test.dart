@@ -3,34 +3,39 @@ import 'package:topic12_provider_demo/presentation/viewmodels/study_view_model.d
 
 void main() {
   group('StudyViewModel', () {
-    late StudyViewModel model;
+    late StudyViewModel viewModel;
 
-    setUp(() {
-      model = StudyViewModel();
+    setUp(() => viewModel = StudyViewModel());
+
+    test('loads sample tasks and calculates progress', () {
+      expect(viewModel.totalTasks, 5);
+      expect(viewModel.completedTasks, 1);
+      expect(viewModel.progress, 0.2);
     });
 
-    test('starts with sample study tasks', () {
-      expect(model.tasks, isNotEmpty);
-      expect(model.totalTasks, greaterThan(0));
+    test('toggleTask changes completion and progress', () {
+      final task = viewModel.tasks.firstWhere((item) => !item.isDone);
+      viewModel.toggleTask(task.id);
+      expect(viewModel.completedTasks, 2);
+      expect(viewModel.progress, 0.4);
     });
 
-    test('toggling a task updates completed count', () {
-      final task = model.tasks.first;
-      final before = model.completedTasks;
-      model.toggleTask(task.id);
-      expect(model.completedTasks, before + (task.isDone ? -1 : 1));
+    test('addTask adds a task and its subject filter', () {
+      viewModel.addTask(title: 'Ôn Provider', subject: 'Flutter');
+      expect(viewModel.tasks.last.title, 'Ôn Provider');
+      expect(viewModel.subjects, contains('Flutter'));
+      expect(viewModel.totalTasks, 6);
     });
 
-    test('adds a new task', () {
-      final before = model.totalTasks;
-      model.addTask(title: 'Ôn tập Provider', subject: 'Lập trình');
-      expect(model.totalTasks, before + 1);
-      expect(model.tasks.last.title, 'Ôn tập Provider');
+    test('does not add empty task data', () {
+      viewModel.addTask(title: '  ', subject: 'Toán');
+      expect(viewModel.totalTasks, 5);
     });
 
-    test('filters tasks by subject', () {
-      model.selectSubject('Toán');
-      expect(model.visibleTasks.every((task) => task.subject == 'Toán'), isTrue);
+    test('filters tasks by selected subject', () {
+      viewModel.selectSubject('Toán');
+      expect(viewModel.visibleTasks, hasLength(1));
+      expect(viewModel.visibleTasks.first.subject, 'Toán');
     });
   });
 }
