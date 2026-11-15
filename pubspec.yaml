@@ -1,13 +1,14 @@
 name: topic12_provider_demo
-description: Minimal Flutter Web demo for Provider and ChangeNotifier using MVVM and Clean Code.
+description: Ung dung quan ly nhiem vu hoc tap voi Flutter, Provider, MVVM va Supabase.
 publish_to: 'none'
-version: 1.0.0+2
+version: 1.0.0+3
 environment:
   sdk: '>=3.3.0 <4.0.0'
 dependencies:
   flutter:
     sdk: flutter
   provider: ^6.1.2
+  supabase_flutter: ^2.8.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
