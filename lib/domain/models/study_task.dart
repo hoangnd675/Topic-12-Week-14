@@ -13,13 +13,27 @@ class StudyTask {
   final String dueLabel;
   final bool isDone;
 
-  StudyTask copyWith({bool? isDone}) {
-    return StudyTask(
-      id: id,
-      title: title,
-      subject: subject,
-      dueLabel: dueLabel,
-      isDone: isDone ?? this.isDone,
-    );
-  }
+  factory StudyTask.fromMap(Map<String, dynamic> map) => StudyTask(
+        id: map['id'] as String,
+        title: map['title'] as String,
+        subject: map['subject'] as String,
+        dueLabel: map['due_label'] as String? ?? 'Mới thêm',
+        isDone: map['is_done'] as bool? ?? false,
+      );
+
+  Map<String, dynamic> toMap() => {
+        'id': id,
+        'title': title,
+        'subject': subject,
+        'due_label': dueLabel,
+        'is_done': isDone,
+      };
+
+  StudyTask copyWith({bool? isDone}) => StudyTask(
+        id: id,
+        title: title,
+        subject: subject,
+        dueLabel: dueLabel,
+        isDone: isDone ?? this.isDone,
+      );
 }
