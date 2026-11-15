@@ -2,13 +2,15 @@ name: Expand Flutter source
 on:
   workflow_dispatch:
   push:
+    paths:
+      - topic12_provider_dashboard.zip
+      - .github/workflows/expand-source.yml
 
 permissions:
   contents: write
 
 jobs:
   expand:
-    if: github.event_name == 'workflow_dispatch' || hashFiles('topic12_provider_dashboard.zip') != ''
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -16,10 +18,6 @@ jobs:
           fetch-depth: 0
       - name: Extract project
         run: |
-          if [ ! -f topic12_provider_dashboard.zip ]; then
-            echo "No source archive found; skipping."
-            exit 0
-          fi
           unzip -o topic12_provider_dashboard.zip -d /tmp/topic12
           cp -R /tmp/topic12/topic12_provider_dashboard/. .
           rm topic12_provider_dashboard.zip
