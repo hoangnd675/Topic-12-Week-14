@@ -1,13 +1,10 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
 class ThemeViewModel extends ChangeNotifier {
-  ThemeMode _themeMode = ThemeMode.dark;
-
-  ThemeMode get themeMode => _themeMode;
-  bool get isDark => _themeMode == ThemeMode.dark;
-
+  bool _isDark = false;
+  bool get isDark => _isDark;
   void toggleTheme() {
-    _themeMode = isDark ? ThemeMode.light : ThemeMode.dark;
+    _isDark = !_isDark;
     notifyListeners();
   }
 }

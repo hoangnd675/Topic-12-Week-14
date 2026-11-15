@@ -1,28 +1,35 @@
-# Chủ đề 12 — Quản lý trạng thái với Provider & ChangeNotifier
+# Topic 12 – Provider & ChangeNotifier
 
-Ứng dụng Flutter Web minh họa dashboard giám sát CPU, RAM, Network và trạng thái thiết bị bằng Provider + ChangeNotifier.
+Flutter Web demo tối giản cho bài thực hành quản lý trạng thái.
 
-## 1. Yêu cầu môi trường
+## Chức năng
+- Danh sách sản phẩm mẫu và lọc theo danh mục.
+- Thêm/bớt/xóa giỏ hàng, tự tính số lượng và tổng tiền.
+- Chuyển Dark/Light theme toàn cục.
+- Responsive cho mobile, tablet, desktop; chạy trên Chrome.
 
-- Flutter SDK
-- Dart SDK đi kèm Flutter
-- Google Chrome
-- VS Code hoặc Android Studio
+## Kiến thức thể hiện
+- MultiProvider đăng ký nhiều state.
+- ChangeNotifierProvider cung cấp ViewModel.
+- Consumer lắng nghe và cập nhật UI.
+- Selector giới hạn rebuild cho số lượng giỏ hàng.
+- context.watch/read đọc state và gọi action.
 
-## 2. Chạy trên Chrome
+## Kiến trúc
+- domain/models: mô hình dữ liệu.
+- data/repositories: nguồn dữ liệu.
+- presentation/viewmodels: state và nghiệp vụ.
+- presentation/views: màn hình.
+- presentation/widgets: widget tái sử dụng.
 
-Mở terminal tại thư mục dự án:
-
+## Chạy local
 ```bash
-flutter doctor
-flutter config --enable-web
 flutter pub get
 flutter run -d chrome
-```
-
-## Kiểm thử
-
-```bash
 flutter analyze
 flutter test
+flutter build web --release
 ```
+
+## Vercel
+Vercel chạy bash build.sh và phục vụ thư mục build/web.
