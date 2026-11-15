@@ -28,6 +28,7 @@ class StudyViewModel extends ChangeNotifier {
     final cleanSubject = subject.trim();
     if (cleanTitle.isEmpty || cleanSubject.isEmpty) return;
     _tasks.add(StudyTask(id: DateTime.now().microsecondsSinceEpoch.toString(), title: cleanTitle, subject: cleanSubject, dueLabel: 'Mới thêm'));
+    _selectedSubject = 'Tất cả';
     notifyListeners();
   }
 }
