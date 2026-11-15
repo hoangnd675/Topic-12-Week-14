@@ -69,6 +69,12 @@ void main() {
 
     expect(find.text('Vui lòng nhập tên nhiệm vụ'), findsOneWidget);
     expect(find.text('Thêm nhiệm vụ học tập'), findsOneWidget);
+
+    // Close the validation dialog so its FocusScope is removed cleanly
+    // before the widget test tears down the route tree.
+    await tester.tap(find.text('Hủy'));
+    await tester.pumpAndSettle();
+    expect(find.text('Thêm nhiệm vụ học tập'), findsNothing);
   });
 
   testWidgets('filters tasks by subject', (tester) async {
