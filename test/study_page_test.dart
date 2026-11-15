@@ -11,18 +11,25 @@ Widget createTestApp() {
       ChangeNotifierProvider(create: (_) => StudyViewModel()),
       ChangeNotifierProvider(create: (_) => ThemeViewModel()),
     ],
-    child: Consumer<ThemeViewModel>(
-      builder: (context, theme, _) => MaterialApp(
-        theme: ThemeData(
-          useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
-        ),
-        darkTheme: ThemeData(
-          useMaterial3: true,
-          brightness: Brightness.dark,
-        ),
-        themeMode: theme.isDark ? ThemeMode.dark : ThemeMode.light,
-        home: const StudyPage(),
+    child: MaterialApp(
+      theme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
+      ),
+      home: Consumer<ThemeViewModel>(
+        builder: (context, theme, _) {
+          final data = theme.isDark
+              ? ThemeData(
+                  useMaterial3: true,
+                  brightness: Brightness.dark,
+                )
+              : ThemeData(
+                  useMaterial3: true,
+                  colorScheme:
+                      ColorScheme.fromSeed(seedColor: Colors.indigo),
+                );
+          return Theme(data: data, child: const StudyPage());
+        },
       ),
     ),
   );
