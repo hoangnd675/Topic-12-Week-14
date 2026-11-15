@@ -81,7 +81,6 @@ class StudyPage extends StatelessWidget {
                   (task) => _TaskTile(task: task),
                 ),
               const SizedBox(height: 24),
-              const _ProviderNote(),
             ],
           ),
         ),
@@ -93,12 +92,14 @@ class StudyPage extends StatelessWidget {
     final titleController = TextEditingController();
     final subjectController = TextEditingController(text: 'Lập trình');
     final formKey = GlobalKey<FormState>();
+    String selectedDay = 'Thứ 2';
 
     try {
       await showDialog<void>(
         context: context,
         builder: (dialogContext) {
-          return AlertDialog(
+          return StatefulBuilder(
+            builder: (dialogContext, setDialogState) => AlertDialog(
             title: const Text('Thêm nhiệm vụ học tập'),
             content: Form(
               key: formKey,
@@ -123,6 +124,23 @@ class StudyPage extends StatelessWidget {
                             ? 'Vui lòng nhập môn học'
                             : null,
                   ),
+                  const SizedBox(height: 12),
+                  DropdownButtonFormField<String>(
+                    value: selectedDay,
+                    decoration: const InputDecoration(labelText: 'Thứ'),
+                    items: const [
+                      'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5',
+                      'Thứ 6', 'Thứ 7', 'Chủ nhật',
+                    ].map((day) => DropdownMenuItem(
+                      value: day,
+                      child: Text(day),
+                    )).toList(),
+                    onChanged: (day) {
+                      if (day != null) {
+                        setDialogState(() => selectedDay = day);
+                      }
+                    },
+                  ),
                 ],
               ),
             ),
@@ -138,12 +156,15 @@ class StudyPage extends StatelessWidget {
                   final added = context.read<StudyViewModel>().addTask(
                         title: titleController.text,
                         subject: subjectController.text,
+                        dueLabel: selectedDay,
                       );
                   if (added) Navigator.pop(dialogContext);
                 },
                 child: const Text('Thêm'),
               ),
             ],
+          );
+            ),
           );
         },
       );
@@ -235,6 +256,10 @@ class _TaskTile extends StatelessWidget {
           ),
         ),
         subtitle: Text('${task.subject}  •  ${task.dueLabel}'),
+        secondary: TextButton(
+          onPressed: () => context.read<StudyViewModel>().deleteTask(task.id),
+          child: const Text('Xóa'),
+        ),
       ),
     );
   }
@@ -256,31 +281,3 @@ class _EmptyState extends StatelessWidget {
   }
 }
 
-class _ProviderNote extends StatelessWidget {
-  const _ProviderNote();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Card(
-      elevation: 0,
-      child: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Provider trong demo này',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 8),
-            Text('• MultiProvider / ChangeNotifierProvider: đăng ký ViewModel.'),
-            Text('• context.watch: theo dõi state để cập nhật giao diện.'),
-            Text('• context.read: gọi hành động từ ViewModel.'),
-            Text('• Consumer: cập nhật MaterialApp theo ThemeViewModel.'),
-            Text('• Selector: chỉ cập nhật phần tiến độ khi tỷ lệ thay đổi.'),
-          ],
-        ),
-      ),
-    );
-  }
-}
