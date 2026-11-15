@@ -105,10 +105,19 @@ class _CartDetails extends StatelessWidget {
           const Padding(padding: EdgeInsets.symmetric(vertical: 14), child: Text('Chưa có sản phẩm. Hãy bấm “Thêm vào giỏ”.'))
         else
           ...entries.map((Product p) => ListTile(
-            contentPadding: EdgeInsets.zero, leading: Text(p.emoji, style: const TextStyle(fontSize: 25)),
+            contentPadding: EdgeInsets.zero,
+            leading: Text(p.emoji, style: const TextStyle(fontSize: 25)),
             title: Text(p.name),
-            subtitle: Text(cart.quantityFor(p).toString() + ' × ' + money(p.price)),
-            trailing: Text(money(p.price * cart.quantityFor(p)), style: const TextStyle(fontWeight: FontWeight.bold)),
+            subtitle: Text(money(p.price) + ' / sản phẩm'),
+            trailing: Row(mainAxisSize: MainAxisSize.min, children: [
+              IconButton(tooltip: 'Giảm số lượng', visualDensity: VisualDensity.compact,
+                onPressed: () => context.read<CartViewModel>().remove(p),
+                icon: const Icon(Icons.remove_circle_outline)),
+              Text(cart.quantityFor(p).toString(), style: const TextStyle(fontWeight: FontWeight.bold)),
+              IconButton(tooltip: 'Tăng số lượng', visualDensity: VisualDensity.compact,
+                onPressed: () => context.read<CartViewModel>().add(p),
+                icon: const Icon(Icons.add_circle_outline)),
+            ]),
           )),
         const Divider(),
         Row(children: [
