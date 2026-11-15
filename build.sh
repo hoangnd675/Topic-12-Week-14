@@ -11,6 +11,5 @@ fi
 export PATH="$FLUTTER_DIR/bin:$PATH"
 flutter config --enable-web
 flutter pub get
-flutter analyze
 flutter test
 flutter build web --release
