@@ -1,78 +1,96 @@
 # Topic 12 – Study Planner
 
-Ứng dụng **Study Planner** được xây dựng bằng Flutter Web nhằm minh họa cách quản lý trạng thái với **Provider** và **ChangeNotifier**, kết hợp cách tổ chức mã nguồn theo **Clean Code** và mô hình **MVVM**.
+Ứng dụng quản lý nhiệm vụ học tập được xây dựng bằng **Flutter Web**, **Provider**, **ChangeNotifier**, kiến trúc **Clean Code + MVVM** và **Supabase Database**.
 
-Ứng dụng có thể chạy trên trình duyệt Google Chrome.
+Ứng dụng chạy trên Google Chrome; nhiệm vụ được lưu trên PostgreSQL của Supabase để không mất khi tải lại trang hoặc mở trên thiết bị khác.
 
-## 1. Chức năng chính
+## 1. Chức năng
 
-- Hiển thị danh sách nhiệm vụ học tập mẫu.
-- Thêm nhiệm vụ mới với tên nhiệm vụ, môn học và thứ cần thực hiện.
-- Xóa nhiệm vụ khỏi danh sách.
-- Đánh dấu nhiệm vụ đã hoàn thành hoặc chưa hoàn thành.
-- Lọc nhiệm vụ theo môn học.
-- Tự động cập nhật tổng số nhiệm vụ, số nhiệm vụ đã hoàn thành và phần trăm tiến độ.
-- Chuyển đổi giữa giao diện sáng và giao diện tối.
+- Xem danh sách nhiệm vụ học tập.
+- Thêm nhiệm vụ với tên, môn học và thứ thực hiện.
+- Xóa nhiệm vụ.
+- Đánh dấu hoàn thành / chưa hoàn thành.
+- Lọc theo môn học.
+- Tự tính tổng nhiệm vụ và tiến độ.
+- Chuyển giao diện sáng / tối.
+- Lưu và tải dữ liệu từ Supabase.
 
-## 3. Cài đặt và chạy ứng dụng
+## 2. Công nghệ
 
-### Yêu cầu
+- Flutter Web / Dart
+- Provider và ChangeNotifier
+- Supabase Flutter SDK
+- Supabase PostgreSQL và Row Level Security (RLS)
+- Clean Code và MVVM
 
-- Đã cài đặt Flutter SDK.
-- Đã bật hỗ trợ Flutter Web.
-- Đã cài đặt Google Chrome.
+## 3. Cấu trúc thư mục
 
-### Các bước thực hiện
+```text
+lib/
+  data/
+    repositories/
+      study_repository.dart
+  domain/
+    models/
+      study_task.dart
+  presentation/
+    viewmodels/
+      study_view_model.dart
+      theme_view_model.dart
+    views/
+      study_page.dart
+  main.dart
+```
 
-Tải mã nguồn:
+- **Model:** định nghĩa dữ liệu nhiệm vụ và chuyển đổi JSON.
+- **Repository:** đọc, thêm, cập nhật, xóa dữ liệu trong Supabase.
+- **ViewModel:** quản lý trạng thái, tiến độ và nghiệp vụ.
+- **View:** hiển thị giao diện và nhận thao tác người dùng.
+- **Provider:** cung cấp ViewModel cho các màn hình.
+
+## 4. Cấu hình Supabase
+
+Dự án đã kết nối với project Supabase `topic-12-study-planner`.
+
+Bảng dữ liệu: `public.study_tasks`
+
+| Cột | Kiểu | Ý nghĩa |
+|---|---|---|
+| id | text | Mã nhiệm vụ |
+| title | text | Tên nhiệm vụ |
+| subject | text | Môn học |
+| due_label | text | Thứ thực hiện |
+| is_done | boolean | Trạng thái hoàn thành |
+| created_at | timestamptz | Thời điểm tạo |
+
+Bảng bật Row Level Security (RLS). Đây là bản demo dùng chung không có đăng nhập, vì vậy các policy hiện cho phép vai trò `anon` đọc/ghi/xóa dữ liệu. Không sử dụng dữ liệu cá nhân hoặc bí mật trong bản demo công khai. Nếu triển khai nhiều người dùng thực tế, cần bổ sung Supabase Auth và policy giới hạn theo `user_id`.
+
+Ứng dụng Flutter chỉ sử dụng publishable key; tuyệt đối không đưa `service_role` hoặc secret key vào mã nguồn phía trình duyệt.
+
+## 5. Cài đặt và chạy
+
+Cài Flutter SDK và bật hỗ trợ Web, sau đó chạy:
 
 ```bash
 git clone https://github.com/hoangnd675/Topic-12-Week-14.git
 cd Topic-12-Week-14
-```
-
-Cài đặt các thư viện:
-
-```bash
 flutter pub get
-```
-
-Chạy ứng dụng trên Chrome:
-
-```bash
 flutter run -d chrome
 ```
 
-## 4. Kiểm thử và biên dịch
-
-Chạy các bài kiểm thử:
+## 6. Kiểm thử và build
 
 ```bash
 flutter test
-```
-
-Kiểm tra mã nguồn:
-
-```bash
-flutter analyze
-```
-
-Biên dịch phiên bản Web:
-
-```bash
 flutter build web --release
 ```
 
-Sau khi biên dịch thành công, thư mục đầu ra là:
+Thư mục đầu ra: `build/web/`.
 
-```text
-build/web/
-```
+Vercel sử dụng `build.sh` để cài Flutter, tải dependencies, chạy test và build Web.
 
+## 7. Triển khai
 
-## 8. Triển khai
-
-Mã nguồn được lưu trữ trên GitHub và có thể triển khai dưới dạng Flutter Web trên Vercel.
-
-- **GitHub**: https://github.com/hoangnd675/Topic-12-Week-14
-- **Ứng dụng demo**: https://topic-12-week-14.vercel.app
+- GitHub: https://github.com/hoangnd675/Topic-12-Week-14
+- Supabase: https://supabase.com/dashboard/project/wvsuvofgchmbsyucrdfy
+- Demo: https://topic-12-week-14-hoangnd675.vercel.app
