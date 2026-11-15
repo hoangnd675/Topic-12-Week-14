@@ -52,6 +52,31 @@ void main() {
       expect(viewModel.totalTasks, 5);
     });
 
+
+    test('repository provides independent task collections', () {
+      final first = StudyViewModel();
+      final second = StudyViewModel();
+
+      first.addTask(title: 'New task', subject: 'Toán');
+
+      expect(first.totalTasks, 6);
+      expect(second.totalTasks, 5);
+
+      first.dispose();
+      second.dispose();
+    });
+
+    test('notifies listeners after state changes', () {
+      var notifications = 0;
+      viewModel.addListener(() => notifications++);
+
+      viewModel.toggleTask('task-1');
+      viewModel.selectSubject('Toán');
+      viewModel.addTask(title: 'Bài mới', subject: 'Toán');
+
+      expect(notifications, 3);
+    });
+
     test('ignores unknown task IDs and subjects', () {
       viewModel.toggleTask('missing');
       viewModel.selectSubject('Không tồn tại');
