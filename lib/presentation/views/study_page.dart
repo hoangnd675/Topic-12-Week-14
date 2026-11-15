@@ -123,7 +123,6 @@ class StudyPage extends StatelessWidget {
                 children: [
                   TextFormField(
                     controller: titleController,
-                    autofocus: true,
                     decoration:
                         const InputDecoration(labelText: 'Tên nhiệm vụ'),
                     validator: (value) =>
