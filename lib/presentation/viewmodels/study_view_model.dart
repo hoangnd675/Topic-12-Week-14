@@ -47,7 +47,11 @@ class StudyViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  bool addTask({required String title, required String subject}) {
+  bool addTask({
+    required String title,
+    required String subject,
+    String dueLabel = 'Mới thêm',
+  }) {
     final cleanTitle = title.trim();
     final cleanSubject = subject.trim();
     if (cleanTitle.isEmpty || cleanSubject.isEmpty) return false;
@@ -57,7 +61,7 @@ class StudyViewModel extends ChangeNotifier {
         id: 'task-${_nextTaskId++}',
         title: cleanTitle,
         subject: cleanSubject,
-        dueLabel: 'Mới thêm',
+        dueLabel: dueLabel.trim().isEmpty ? 'Mới thêm' : dueLabel.trim(),
       ),
     );
 
@@ -66,4 +70,16 @@ class StudyViewModel extends ChangeNotifier {
     notifyListeners();
     return true;
   }
+  void deleteTask(String id) {
+    final before = _tasks.length;
+    _tasks.removeWhere((task) => task.id == id);
+    if (_tasks.length == before) return;
+
+    if (_selectedSubject != 'Tất cả' &&
+        !_tasks.any((task) => task.subject == _selectedSubject)) {
+      _selectedSubject = 'Tất cả';
+    }
+    notifyListeners();
+  }
+
 }
