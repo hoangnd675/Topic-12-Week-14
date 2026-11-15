@@ -1,39 +1,55 @@
-# Topic 12 – Provider & ChangeNotifier
+# Topic 12 - Study Planner
 
-Study Planner là ứng dụng Flutter Web demo quản lý nhiệm vụ học tập, được xây dựng theo Clean Code và MVVM.
+A small Flutter Web application demonstrating Provider, ChangeNotifier, Clean Code and MVVM.
 
-## Chức năng
-- Xem tổng quan số nhiệm vụ và tiến độ học tập.
-- Xem danh sách nhiệm vụ theo môn học.
-- Thêm nhiệm vụ học tập mới.
-- Đánh dấu hoàn thành / chưa hoàn thành.
-- Lọc nhiệm vụ theo môn học.
-- Chuyển giao diện sáng / tối.
-- Responsive, chạy trên Chrome.
+## Run locally
 
-## Kiến thức Provider
-- MultiProvider: đăng ký nhiều ViewModel.
-- ChangeNotifierProvider: cung cấp StudyViewModel và ThemeViewModel.
-- Consumer: cập nhật giao diện khi dữ liệu thay đổi.
-- Selector: chỉ rebuild phần tiến độ khi tỷ lệ hoàn thành đổi.
-- context.watch: lắng nghe trạng thái.
-- context.read: gọi hành động mà không đăng ký lắng nghe.
-
-## Cấu trúc Clean Code + MVVM
-- domain/models: StudyTask – mô hình nhiệm vụ học tập.
-- data/repositories: StudyRepository – cung cấp dữ liệu ban đầu.
-- presentation/viewmodels: StudyViewModel – quản lý state và nghiệp vụ.
-- presentation/views: StudyPage – màn hình chính.
-- presentation/widgets: các thành phần giao diện có thể tái sử dụng.
-
-## Chạy local
 ```bash
 flutter pub get
 flutter run -d chrome
-flutter analyze
+```
+
+## Run tests
+
+```bash
 flutter test
+```
+
+## Build for web
+
+```bash
 flutter build web --release
 ```
 
-## Deploy Vercel
-Vercel sử dụng `build.sh` để cài Flutter SDK và build thư mục `build/web`.
+## Project structure
+
+```text
+lib/
+  data/repositories/study_repository.dart
+  domain/models/study_task.dart
+  presentation/viewmodels/study_view_model.dart
+  presentation/viewmodels/theme_view_model.dart
+  presentation/views/study_page.dart
+  main.dart
+test/
+  study_view_model_test.dart
+  study_page_test.dart
+```
+
+## Demo features
+
+- Add a study task with a title and subject.
+- Filter tasks by subject.
+- Mark tasks complete or incomplete.
+- Automatically calculate completed count and progress.
+- Switch between light and dark themes.
+
+## Provider concepts
+
+- `MultiProvider` and `ChangeNotifierProvider`: register ViewModels.
+- `context.watch`: rebuild UI when state changes.
+- `context.read`: call ViewModel actions.
+- `Consumer`: rebuild the app when the theme changes.
+- `Selector`: rebuild only progress widgets when progress changes.
+
+Sample tasks are stored in memory and reset when the app restarts. This keeps the demo focused on state management.
