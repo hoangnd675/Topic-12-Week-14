@@ -1,26 +1,30 @@
 # Topic 12 – Provider & ChangeNotifier
 
-Flutter Web demo tối giản cho bài thực hành quản lý trạng thái.
+Study Planner là ứng dụng Flutter Web demo quản lý nhiệm vụ học tập, được xây dựng theo Clean Code và MVVM.
 
 ## Chức năng
-- Danh sách sản phẩm mẫu và lọc theo danh mục.
-- Thêm/bớt/xóa giỏ hàng, tự tính số lượng và tổng tiền.
-- Chuyển Dark/Light theme toàn cục.
-- Responsive cho mobile, tablet, desktop; chạy trên Chrome.
+- Xem tổng quan số nhiệm vụ và tiến độ học tập.
+- Xem danh sách nhiệm vụ theo môn học.
+- Thêm nhiệm vụ học tập mới.
+- Đánh dấu hoàn thành / chưa hoàn thành.
+- Lọc nhiệm vụ theo môn học.
+- Chuyển giao diện sáng / tối.
+- Responsive, chạy trên Chrome.
 
-## Kiến thức thể hiện
-- MultiProvider đăng ký nhiều state.
-- ChangeNotifierProvider cung cấp ViewModel.
-- Consumer lắng nghe và cập nhật UI.
-- Selector giới hạn rebuild cho số lượng giỏ hàng.
-- context.watch/read đọc state và gọi action.
+## Kiến thức Provider
+- MultiProvider: đăng ký nhiều ViewModel.
+- ChangeNotifierProvider: cung cấp StudyViewModel và ThemeViewModel.
+- Consumer: cập nhật giao diện khi dữ liệu thay đổi.
+- Selector: chỉ rebuild phần tiến độ khi tỷ lệ hoàn thành đổi.
+- context.watch: lắng nghe trạng thái.
+- context.read: gọi hành động mà không đăng ký lắng nghe.
 
-## Kiến trúc
-- domain/models: mô hình dữ liệu.
-- data/repositories: nguồn dữ liệu.
-- presentation/viewmodels: state và nghiệp vụ.
-- presentation/views: màn hình.
-- presentation/widgets: widget tái sử dụng.
+## Cấu trúc Clean Code + MVVM
+- domain/models: StudyTask – mô hình nhiệm vụ học tập.
+- data/repositories: StudyRepository – cung cấp dữ liệu ban đầu.
+- presentation/viewmodels: StudyViewModel – quản lý state và nghiệp vụ.
+- presentation/views: StudyPage – màn hình chính.
+- presentation/widgets: các thành phần giao diện có thể tái sử dụng.
 
 ## Chạy local
 ```bash
@@ -31,5 +35,5 @@ flutter test
 flutter build web --release
 ```
 
-## Vercel
-Vercel chạy bash build.sh và phục vụ thư mục build/web.
+## Deploy Vercel
+Vercel sử dụng `build.sh` để cài Flutter SDK và build thư mục `build/web`.
