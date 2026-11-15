@@ -172,7 +172,7 @@ class StudyPage extends StatelessWidget {
                     child: const Text('Hủy'),
                   ),
                   FilledButton(
-                    onPressed: () {
+                    onPressed: () async {
                       if (!formKey.currentState!.validate()) return;
 
                       final added = await context.read<StudyViewModel>().addTask(
